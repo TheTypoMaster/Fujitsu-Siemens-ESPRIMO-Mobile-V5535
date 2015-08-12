@@ -298,8 +298,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
-HOSTCXXFLAGS = -O2
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fomit-frame-pointer -std=gnu99 --param ggc-min-expand=70 --param ggc-min-heapsize=262144 -pipe
+HOSTCXXFLAGS = -Ofast --param ggc-min-expand=70 --param ggc-min-heapsize=262144 -pipe
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
 HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
@@ -369,12 +369,12 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
+CFLAGS_MODULE   = -pipe
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
 CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
-CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
+CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage -pipe
 
 
 # Use USERINCLUDE when you must reference the UAPI directories only.
@@ -401,13 +401,18 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -std=gnu89
+		   -std=gnu89 \
+		   -march=native \
+		   -mtune=native \
+		   --param ggc-min-expand=70 \
+		   --param ggc-min-heapsize=262144 \
+		   -pipe
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
-KBUILD_AFLAGS_MODULE  := -DMODULE
-KBUILD_CFLAGS_MODULE  := -DMODULE
+KBUILD_AFLAGS_MODULE  := -DMODULE -pipe
+KBUILD_CFLAGS_MODULE  := -DMODULE -pipe
 KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
@@ -613,8 +618,70 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
+LDFLAGS += -Os --as-needed --sort-common
 else
-KBUILD_CFLAGS	+= -O2
+LDFLAGS += -Ofast --as-needed --sort-common
+KBUILD_CFLAGS	+= -Ofast \
+                 -minline-stringops-dynamically \
+                 -minline-all-stringops \
+                 -maccumulate-outgoing-args \
+		  -fno-branch-count-reg \
+		  -ftree-vectorize \
+		  -funsafe-loop-optimizations \
+		  -fno-keep-static-consts \
+		  -fmerge-all-constants \
+		  -fmodulo-sched \
+		  -fmodulo-sched-allow-regmoves \
+		  -fgcse-sm \
+		  -fgcse-las \
+		  -fgcse-after-reload \
+		  -fira-region=all \
+		  -fsched-pressure \
+		  -fsched-spec-load \
+		  -fsched-spec-load-dangerous \
+		  -fselective-scheduling \
+		  -fsel-sched-pipelining \
+		  -fsel-sched-pipelining-outer-loops \
+		  -fipa-pta \
+		  -fno-check-data-deps \
+		  -ftree-loop-if-convert \
+		  -ftree-loop-distribution \
+		  -ftree-loop-im \
+		  -ftree-loop-ivcanon \
+		  -fivopts \
+		  -ftracer \
+		  -fweb \
+		  -fuse-linker-plugin \
+		  -fprofile-correction \
+		  -frename-registers \
+		  -funswitch-loops \
+		  -DNDEBUG \
+		  -frerun-cse-after-loop \
+		  -fpeel-loops \
+		  -fbtr-bb-exclusive \
+		  -fcx-fortran-rules \
+		  --param max-reload-search-insns=300 \
+		  --param max-cselib-memory-locations=1500 \
+		  --param max-sched-ready-insns=300 \
+		  --param loop-invariant-max-bbs-in-loop=30000 \
+		  --param inline-unit-growth=90 \
+		  --param ipcp-unit-growth=30 \
+		  --param large-stack-frame-growth=3000 \
+		  --param gcse-cost-distance-ratio=30 \
+		  --param gcse-unrestricted-cost=0 \
+		  --param max-cse-path-length=30 \
+		  --param max-cse-insns=3000 \
+		  --param max-sched-region-blocks=30 \
+		  --param max-pipeline-region-blocks=45 \
+		  --param max-sched-region-insns=300 \
+		  --param max-pipeline-region-insns=600 \
+		  --param selsched-max-lookahead=150 \
+		  --param max-last-value-rtl=30000 \
+		  --param max-fields-for-field-sensitive=300 \
+		  --param use-canonical-types=1 \
+		  --param sccvn-max-scc-size=30000 \
+		  --param ira-max-loops-num=300 \
+		  --param max-stores-to-sink=6
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
