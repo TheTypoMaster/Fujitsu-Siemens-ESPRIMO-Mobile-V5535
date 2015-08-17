@@ -404,6 +404,10 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -std=gnu89 \
 		   -march=native \
 		   -mtune=native \
+		   -minline-stringops-dynamically \
+		   -minline-all-stringops \
+		   -maccumulate-outgoing-args \
+		   -fno-branch-count-reg \
 		   -pipe
 
 KBUILD_AFLAGS_KERNEL :=
@@ -620,22 +624,12 @@ LDFLAGS += -Os --as-needed --sort-common
 else
 LDFLAGS += -O2 --as-needed --sort-common
 KBUILD_CFLAGS	+= -O2 \
-                 -minline-stringops-dynamically \
-                 -minline-all-stringops \
-                 -maccumulate-outgoing-args \
-		  -fno-branch-count-reg \
 		  -ftree-vectorize \
 		  -fmodulo-sched \
 		  -fmodulo-sched-allow-regmoves \
 		  -fgcse-sm \
 		  -fgcse-las \
 		  -fsched-pressure \
-		  -fsched-spec-load \
-		  -fsched-spec-load-dangerous \
-		  -fselective-scheduling \
-		  -fselective-scheduling2 \
-		  -fsel-sched-pipelining \
-		  -fsel-sched-pipelining-outer-loops \
 		  -fipa-pta \
 		  -ftree-loop-if-convert \
 		  -ftree-loop-distribution \
@@ -648,8 +642,6 @@ KBUILD_CFLAGS	+= -O2 \
 		  -finline-functions \
 		  -fpredictive-commoning \
 		  -fgcse-after-reload \
-		  -fvect-cost-model=dynamic \
-		  -ftree-partial-pre \
 		  -fipa-cp-clone
 endif
 
