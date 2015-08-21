@@ -111,3 +111,4 @@ all.config
 clean.sh
 edit_kernel.sh
 build_kernel.sh
+patch.sh
