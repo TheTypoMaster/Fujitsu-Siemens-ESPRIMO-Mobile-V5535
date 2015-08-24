@@ -642,7 +642,11 @@ KBUILD_CFLAGS	+= -O2 \
 		  -finline-functions \
 		  -fpredictive-commoning \
 		  -fgcse-after-reload \
-		  -fipa-cp-clone
+		  -fipa-cp-clone \
+		  -fno-align-functions \
+		  -fno-align-loops \
+		  -fno-align-jumps \
+		  -fno-align-labels
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
