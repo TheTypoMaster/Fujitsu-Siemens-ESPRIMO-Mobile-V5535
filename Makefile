@@ -637,7 +637,6 @@ KBUILD_CFLAGS	+= -O2 \
 		  -ftree-loop-ivcanon \
 		  -fivopts \
 		  -fweb \
-		  -fuse-linker-plugin \
 		  -DNDEBUG \
 		  -finline-functions \
 		  -fpredictive-commoning \
