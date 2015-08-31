@@ -369,7 +369,7 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   = -pipe
+CFLAGS_MODULE   = -fno-lto -fno-use-linker-plugin -fno-fat-lto-objects -pipe
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
 CFLAGS_KERNEL	=
@@ -631,16 +631,23 @@ KBUILD_CFLAGS	+= -O2 \
 		  -fgcse-las \
 		  -fsched-pressure \
 		  -fipa-pta \
+		  -fisolate-erroneous-paths-attribute \
 		  -ftree-loop-if-convert \
 		  -ftree-loop-distribution \
 		  -ftree-loop-im \
 		  -ftree-loop-ivcanon \
 		  -fivopts \
+		  -ftree-coalesce-inlined-vars \
 		  -fweb \
+		  -flto \
+		  -fuse-linker-plugin \
+		  -ffat-lto-objects \
 		  -DNDEBUG \
 		  -finline-functions \
 		  -fpredictive-commoning \
 		  -fgcse-after-reload \
+		  -fvect-cost-model=dynamic \
+		  -ftree-partial-pre \
 		  -fipa-cp-clone \
 		  -fno-align-functions \
 		  -fno-align-loops \
