@@ -298,8 +298,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu99 -pipe
-HOSTCXXFLAGS = -O2 -pipe
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fno-unswitch-loops -fomit-frame-pointer -std=gnu99 -pipe
+HOSTCXXFLAGS = -O3 -fno-unswitch-loops -pipe
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
 HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
@@ -369,7 +369,7 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   = -fno-lto -fno-use-linker-plugin -fno-fat-lto-objects -pipe
+CFLAGS_MODULE   = -fno-lto -fno-fat-lto-objects -pipe
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
 CFLAGS_KERNEL	=
@@ -623,7 +623,7 @@ KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 LDFLAGS += -Os --as-needed --sort-common
 else
 LDFLAGS += -O2 --as-needed --sort-common
-KBUILD_CFLAGS	+= -O2 \
+KBUILD_CFLAGS	+= -O3 -fno-unswitch-loops \
 		  -ftree-vectorize \
 		  -fmodulo-sched \
 		  -fmodulo-sched-allow-regmoves \
@@ -640,19 +640,8 @@ KBUILD_CFLAGS	+= -O2 \
 		  -ftree-coalesce-inlined-vars \
 		  -fweb \
 		  -flto \
-		  -fuse-linker-plugin \
 		  -ffat-lto-objects \
-		  -DNDEBUG \
-		  -finline-functions \
-		  -fpredictive-commoning \
-		  -fgcse-after-reload \
-		  -fvect-cost-model=dynamic \
-		  -ftree-partial-pre \
-		  -fipa-cp-clone \
-		  -fno-align-functions \
-		  -fno-align-loops \
-		  -fno-align-jumps \
-		  -fno-align-labels
+		  -DNDEBUG
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
